@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>새로운 채팅</title>
+</head>
+<body>
+    <h1>새로운 채팅 생성</h1>
+    <form action="/addchat" method="post">
+        <label for="chat_name">채팅 이름:</label>
+        <input type="text" id="chat_name" name="chat_name" required>
+        <label for="사용자들">사용자:</label>
+        <input type="text" id="users" name="users" placeholder="쉼표로 구분된 사용자 이름" required>
+        <button type="submit">생성</button>
+    </form>
+</body>
+</html>

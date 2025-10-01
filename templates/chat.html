@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>채팅</title>
+</head>
+<body>
+    <h1>채팅 페이지</h1>
+    <a href="/">홈으로</a>
+    <ul id="chattings">
+        {% for chat in chats %}
+            <li>
+                <a href="{{ url_for('inchat', chatname=chat.chat_name) }}">
+                    {{ chat.chat_name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+    <form action="{{ url_for('addchat') }}" method="get">
+        <button type="submit">채팅방 생성</button>
+    </form>
+</body>
+</html>

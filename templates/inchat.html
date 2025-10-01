@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{chatname}}</title>
+</head>
+<body>
+    <ul>
+        {% for message in messages %}
+            <li>{{message}}</li>
+        {% endfor %}
+    </ul>
+    <form action="/chat" method="get">
+        <input type="submit" value="뒤로가기">
+    </form>
+    <form action="/addmessage" method="post">
+        <input type="hidden" name="chatname" value="{{chatname}}">
+        <label for="message">메시지:</label>
+        <input type="text" id="message" name="message" required>
+        <input type="submit" value="메시지 보내기">
+    </form>
+    <form action="/leavechat" method="POST">
+        <input type="submit" value="채팅방 나가기">
+        <input type="checkbox" id="동의" name="동의" value="True" required>
+        <input type ="hidden" name="chatname" value="{{chatname}}">
+        <input type="hidden" name="username" value="{{username}}">
+    </form>
+</body>
+</html>
