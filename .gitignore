@@ -1,5 +1,2 @@
-/__pychche__/
-*.pyc
-*.pkl
-
-*.env
+venv/*
+__pycache__/*

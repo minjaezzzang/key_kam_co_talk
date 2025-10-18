@@ -2,7 +2,7 @@ class Chat:
     def __init__(self, chat_name, users):
         self.chat_name = chat_name
         self.users = users
-        self.messages = []   # ✅ 오타 수정 (maessages → messages)
+        self.messages = []  
 
     def add_message(self, sender, message):
         msg = f'{sender}: {message}'
@@ -13,12 +13,14 @@ class Chat:
             self.users.remove(username)
 
     def get_my_messages(self, username):
-        # ✅ sender 기준으로 필터링
+        
         return [msg for msg in self.messages if msg['sender'] == username]
 
     def get_all_messages(self):
         return self.messages
-
+    def send_admin_message(self, message):
+        admin_msg = f'{message}'
+        self.messages.append(admin_msg)
 
 class User:
     def __init__(self, username, password):

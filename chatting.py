@@ -1,11 +1,11 @@
 import os
-import dotenv as dv
-from flask import (
-    Flask, redirect, render_template,
-    request, session, url_for
-)
-import threading as td
 import pickle as pkl
+import threading as td
+import time
+
+import dotenv as dv
+from flask import Flask, redirect, render_template, request, session, url_for
+
 from chatmanager import Chatmanager, Usermanager
 
 dv.load_dotenv('.env')
@@ -17,12 +17,23 @@ app.secret_key = os.environ.get('SECRET_KEY')
 def if_logged_in(username):
     return Usermanager.is_logged_in(username)
 
+def is_user_active():
+    try:
+        if session['username'] == None:
+            print(end='')#의미없는 코드
+            #로그인 안돼있으면 except문으로
+        else:
+            return True
+    except KeyError:
+        return False
+        
 
 @app.get('/')
 def index():
-    return render_template('index.html')
-
-
+    if is_user_active():
+        return render_template('index.html',logined_user=session['username'])
+    else:
+        return render_template('index.html',logined_user="로그인되어 있지 않음")
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     if request.method == 'POST':
@@ -30,9 +41,9 @@ def signup():
         password = request.form.get('password')
         if Usermanager.get_user(username) is None:
             Usermanager.add_user(username, password)
-            return render_template('signuppost.html', username=username)
+            return render_template('signup.html', username=username)
         else:
-            return redirect(url_for('signup'))
+            return redirect(url_for('login'))
     else:
         return render_template('register.html')
 
@@ -122,6 +133,7 @@ def leavechat():
         chat = Chatmanager.get_class_by_chatname(chat_name)
         user = Usermanager.get_class_by_username(username)
         if chat and user:
+            chat.send_admin_message(f'[{username}]님이 채팅방을 나갔습니다.')
             user.leave_chat(chat)
         return redirect(url_for('chat'))
     else:
@@ -149,18 +161,19 @@ def not_found(e):
 @app.errorhandler(500)
 def server_error(e):
     return render_template('500.html'), 500
+
 def update_db():
-    pkl.dump(Usermanager, open('user.pkl', 'wb'))
-    pkl.dump(Chatmanager, open('chat.pkl', 'wb'))
-    update_db()
-thread = td.Thread(target=app.run, kwargs={
-    'host': os.environ.get('HOST'),
-    'port': int(os.environ.get('PORT', 5000)),
-    'debug': os.environ.get('DEBUG', 'False') == 'True'
-})
-thread2 = td.Thread(target=update_db)
+    while True:
+        time.sleep(2)
+        pkl.dump(Usermanager, open('db/user.pkl', 'wb'))
+        pkl.dump(Chatmanager, open('db/chat.pkl', 'wb'))
 if __name__ == '__main__':
-    thread.start()
-    thread2.start()
+    db_thread = td.Thread(target=update_db, daemon=True)
+    db_thread.start()
+    app.run(
+        port=int(os.environ.get('PORT')),
+        debug=True if os.environ.get('DEBUG') == 'True' else False,
+        host=os.environ.get('HOST')
+            )
 else:
     raise RuntimeError("This module is not meant to be imported directly.")
